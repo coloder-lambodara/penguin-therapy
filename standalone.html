@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="description" content="Penguin Therapy - Un gioco di animale virtuale interattivo">
+    <meta name="theme-color" content="#2c3e50">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="🐧 Penguin Therapy">
+    <title>🐧 Penguin Therapy - Gioco Interattivo</title>
+    <style>
+        :root {
+            --bg-color: #2c3e50;
+            --device-bg: #e0e6ed;
+            --screen-bg: #a1d6e2;
+            --text-dark: #2d3436;
+            --wood-light: #d4a373;
+            --wood-dark: #8b5a33;
+            --wood-edge: #5c3a21;
+            --snow: #f8f9fa;
+            --accent: #ff9f43;
+            --outline: #1e272e;
+            --ui-panel: #ced6e0;
+            --success: #2ecc71;
+            --warning: #f1c40f;
+            --danger: #e74c3c;
+        }
+
+        * {
+            box-sizing: border-box;
+            user-select: none;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Courier New', Courier, monospace;
+            padding: 10px;
+        }
+
+        #device {
+            background-color: var(--device-bg);
+            width: 100%;
+            max-width: 420px;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: inset -4px -4px 10px rgba(0,0,0,0.1), inset 4px 4px 10px rgba(255,255,255,0.8), 8px 12px 20px rgba(0,0,0,0.4);
+            border: 2px solid var(--outline);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        #title {
+            text-align: center;
+            font-weight: 900;
+            font-size: 18px;
+            color: var(--text-dark);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-shadow: 1px 1px 0 rgba(255,255,255,0.8);
+            margin: 0;
+        }
+
+        #screen-bezel {
+            background-color: #4b6584;
+            padding: 15px;
+            border-radius: 12px;
+            border: 2px solid var(--outline);
+            box-shadow: inset 2px 2px 8px rgba(0,0,0,0.5);
+        }
+
+        #screen {
+            background-color: var(--screen-bg);
+            width: 100%;
+            height: 260px;
+            position: relative;
+            overflow: hidden;
+            border: 2px solid var(--outline);
+            image-rendering: pixelated;
+            transition: filter 1s ease;
+        }
+
+        #screen.night {
+            filter: brightness(0.4) contrast(1.2);
+        }
+
+        #sun-moon {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 24px;
+            height: 24px;
+            background: #fff9c4;
+            border: 2px solid var(--outline);
+            box-shadow: 0 0 0 2px rgba(255, 249, 196, 0.4);
+            border-radius: 50%;
+            transition: opacity 0.5s ease;
+        }
+
+        #sun-moon.moon {
+            background: #e8e8e8;
+            opacity: 0.6;
+        }
+
+        #snowflakes {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+        }
+
+        .flake {
+            position: absolute;
+            background: white;
+            width: 4px;
+            height: 4px;
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            0% { transform: translateY(-10px); }
+            100% { transform: translateY(280px); }
+        }
+
+        #ground {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 50px;
+            background-color: var(--snow);
+            border-top: 2px solid var(--outline);
+        }
+
+        #house {
+            position: absolute;
+            bottom: 48px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .roof-tier-1 { width: 140px; height: 16px; background: var(--snow); border: 2px solid var(--outline); border-bottom: none; }
+        .roof-tier-2 { width: 180px; height: 16px; background: var(--snow); border: 2px solid var(--outline); border-bottom: none; }
+
+        .house-body {
+            width: 150px;
+            height: 110px;
+            background: var(--wood-light);
+            border: 2px solid var(--outline);
+            position: relative;
+            background-image: repeating-linear-gradient(90deg, transparent, transparent 18px, rgba(0,0,0,0.1) 18px, rgba(0,0,0,0.1) 20px);
+        }
+
+        .door {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 36px;
+            height: 48px;
+            background: var(--wood-dark);
+            border: 2px solid var(--outline);
+            border-bottom: none;
+            transition: transform 0.3s ease;
+        }
+
+        .doorknob {
+            position: absolute;
+            right: 4px;
+            top: 22px;
+            width: 4px;
+            height: 4px;
+            background: #f1c40f;
+            border-radius: 50%;
+        }
+
+        .window {
+            position: absolute;
+            top: 45px;
+            width: 24px;
+            height: 24px;
+            background: #ffeb3b;
+            border: 2px solid var(--outline);
+            box-shadow: 0 0 8px rgba(255, 235, 59, 0.6);
+        }
+        .window.left { left: 12px; }
+        .window.right { right: 12px; }
+
+        .window::after { content: ''; position: absolute; top: 10px; left: 0; width: 100%; height: 2px; background: var(--outline); }
+        .window::before { content: ''; position: absolute; top: 0; left: 10px; width: 2px; height: 100%; background: var(--outline); }
+
+        #house-sign {
+            position: absolute;
+            top: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 136px;
+            background: var(--wood-dark);
+            border: 2px solid var(--wood-edge);
+            padding: 4px 2px;
+            text-align: center;
+            box-shadow: 2px 2px 0 rgba(0,0,0,0.3);
+        }
+
+        #house-sign-text {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 8.5px;
+            line-height: 1.1;
+            color: #fdf5e6;
+            font-weight: bold;
+            text-shadow: 1px 1px 0 rgba(0,0,0,0.8);
+            margin: 0;
+            letter-spacing: -0.2px;
+        }
+
+        #pet-container {
+            position: absolute;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 84px;
+            height: 60px;
+            z-index: 10;
+        }
+
+        #pet-canvas {
+            width: 100%;
+            height: 100%;
+            image-rendering: pixelated;
+        }
+
+        .bounce {
+            animation: petBounce 0.4s ease infinite alternate;
+        }
+
+        .jump {
+            animation: petJump 0.5s ease;
+        }
+
+        @keyframes petBounce {
+            0% { transform: translateX(-50%) translateY(0); }
+            100% { transform: translateX(-50%) translateY(-4px); }
+        }
+
+        @keyframes petJump {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(-20px); }
+        }
+
+        .particle {
+            position: absolute;
+            font-size: 16px;
+            pointer-events: none;
+            z-index: 20;
+            animation: floatUp 1s forwards;
+        }
+
+        @keyframes floatUp {
+            0% { opacity: 1; transform: translateY(0) scale(1); }
+            100% { opacity: 0; transform: translateY(-40px) scale(1.5); }
+        }
+
+        #ui-panel {
+            background: var(--ui-panel);
+            border: 2px solid var(--outline);
+            border-radius: 8px;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        #status-box {
+            background: #000;
+            color: #fff;
+            padding: 8px;
+            font-size: 12px;
+            border: 2px solid var(--outline);
+            text-align: center;
+            text-transform: uppercase;
+            min-height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            word-break: break-word;
+            animation: statusPulse 0.5s ease;
+        }
+
+        @keyframes statusPulse {
+            0% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+
+        #stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px 15px;
+        }
+
+        .stat-row {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .stat-label {
+            font-size: 10px;
+            font-weight: bold;
+            color: var(--text-dark);
+            text-transform: uppercase;
+        }
+
+        .stat-bar {
+            width: 100%;
+            height: 10px;
+            background: #fff;
+            border: 2px solid var(--outline);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-fill {
+            height: 100%;
+            background: var(--success);
+            width: 100%;
+            transition: width 0.3s, background-color 0.3s;
+        }
+
+        .stat-fill.warning { background: var(--warning); }
+        .stat-fill.danger { background: var(--danger); }
+
+        #actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 5px;
+        }
+
+        button {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 14px;
+            font-weight: 900;
+            padding: 12px 5px;
+            border: 2px solid var(--outline);
+            background: #fff;
+            color: var(--text-dark);
+            text-transform: uppercase;
+            cursor: pointer;
+            box-shadow: 2px 2px 0 var(--outline);
+            border-radius: 4px;
+            transition: all 0.1s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        button:active {
+            transform: translate(2px, 2px);
+            box-shadow: 0px 0px 0 var(--outline);
+            background: #f1f2f6;
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: 2px 2px 0 var(--outline);
+        }
+
+        .btn-icon { 
+            margin-right: 0;
+            font-size: 16px;
+            margin-bottom: 2px;
+        }
+
+        #settings-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .btn-settings {
+            font-size: 12px;
+            padding: 8px;
+        }
+
+        #settings-menu {
+            background: #fff;
+            border: 2px solid var(--outline);
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            transition: max-height 0.3s ease;
+        }
+
+        #settings-menu.hidden {
+            display: none;
+        }
+
+        #settings-menu label {
+            display: flex;
+            align-items: center;
+            font-size: 12px;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        #settings-menu input[type="checkbox"] {
+            cursor: pointer;
+            width: 16px;
+            height: 16px;
+        }
+
+        .btn-reset, .btn-close {
+            font-size: 11px;
+            padding: 6px;
+        }
+
+        @media (max-width: 480px) {
+            body { padding: 5px; }
+            #device { max-width: 100vw; border-radius: 8px; padding: 12px; gap: 10px; }
+            #title { font-size: 14px; letter-spacing: 0.5px; }
+            #screen { height: 200px; }
+            #pet-container { width: 70px; height: 50px; }
+            #sun-moon { width: 20px; height: 20px; top: 15px; right: 15px; }
+            .roof-tier-1 { width: 110px; height: 14px; }
+            .roof-tier-2 { width: 140px; height: 14px; }
+            .house-body { width: 120px; height: 90px; }
+            .door { width: 30px; height: 40px; }
+            .window { width: 20px; height: 20px; }
+            .window.left { left: 8px; }
+            .window.right { right: 8px; }
+            #status-box { font-size: 11px; padding: 6px; min-height: 28px; }
+            #stats-grid { gap: 4px 10px; }
+            .stat-label { font-size: 8px; }
+            .stat-bar { height: 8px; }
+            button { font-size: 11px; padding: 8px 2px; box-shadow: 1px 1px 0 var(--outline); }
+            button:active { transform: translate(1px, 1px); box-shadow: 0px 0px 0 var(--outline); }
+            .btn-icon { font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+    <div id="device">
+        <h1 id="title">🐧 Penguin Therapy</h1>
+        
+        <div id="screen-bezel">
+            <div id="screen">
+                <div id="sun-moon"></div>
+                <div id="snowflakes"></div>
+                
+                <div id="house">
+                    <div class="roof-tier-1"></div>
+                    <div class="roof-tier-2"></div>
+                    <div class="house-body">
+                        <div id="house-sign">
+                            <div id="house-sign-text">Dottoressa Chiara,<br>la psicologa dei pinguini</div>
+                        </div>
+                        <div class="window left"></div>
+                        <div class="window right"></div>
+                        <div class="door"><div class="doorknob"></div></div>
+                    </div>
+                </div>
+
+                <div id="ground"></div>
+                
+                <div id="pet-container" class="bounce">
+                    <canvas id="pet-canvas" width="14" height="10"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div id="ui-panel">
+            <div id="status-box">Ciao! Sono il tuo nuovo animaletto domestico.</div>
+            
+            <div id="stats-grid">
+                <div class="stat-row">
+                    <span class="stat-label">🍖 Fame</span>
+                    <div class="stat-bar"><div id="fill-hunger" class="stat-fill"></div></div>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">😊 Felicità</span>
+                    <div class="stat-bar"><div id="fill-happiness" class="stat-fill"></div></div>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">⚡ Energia</span>
+                    <div class="stat-bar"><div id="fill-energy" class="stat-fill"></div></div>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">✨ Pulizia</span>
+                    <div class="stat-bar"><div id="fill-clean" class="stat-fill"></div></div>
+                </div>
+            </div>
+
+            <div id="actions">
+                <button onclick="gameEngine.doAction('feed')" id="btn-feed" class="btn-action">
+                    <span class="btn-icon">🐟</span><span>Nutrire</span>
+                </button>
+                <button onclick="gameEngine.doAction('play')" id="btn-play" class="btn-action">
+                    <span class="btn-icon">🎾</span><span>Giocare</span>
+                </button>
+                <button onclick="gameEngine.doAction('sleep')" id="btn-sleep" class="btn-action">
+                    <span class="btn-icon">🌙</span><span>Dormire</span>
+                </button>
+                <button onclick="gameEngine.doAction('clean')" id="btn-clean" class="btn-action">
+                    <span class="btn-icon">🛁</span><span>Pulire</span>
+                </button>
+            </div>
+
+            <div id="settings-panel">
+                <button onclick="gameEngine.toggleSettings()" id="btn-settings" class="btn-settings">⚙️ Impostazioni</button>
+                <div id="settings-menu" class="hidden">
+                    <label><input type="checkbox" id="sound-toggle" checked> 🔊 Suoni</label>
+                    <label><input type="checkbox" id="particles-toggle" checked> ✨ Effetti</label>
+                    <button onclick="gameEngine.resetGame()" class="btn-reset">🔄 Ricomincia</button>
+                    <button onclick="gameEngine.toggleSettings()" class="btn-close">✕ Chiudi</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const GAME_CONFIG = {
+            INITIAL_STATS: { hunger: 80, happiness: 80, energy: 80, clean: 80 },
+            DECAY_RATES: { hunger: 1.5, happiness: 1, energy: 0.5, clean: 0.5 },
+            ACTIONS: {
+                feed: { hunger: 30, energy: 5, clean: -5, happiness: 0 },
+                play: { happiness: 30, energy: -15, clean: -15, hunger: -10 },
+                clean: { clean: 100, happiness: 10, energy: -5 },
+                sleep: { energy: 20 }
+            },
+            MOOD_THRESHOLDS: { sad: { hunger: 25, happiness: 25 }, sleepy: 25, happy: { happiness: 75, hunger: 50 } },
+            CRITICAL_THRESHOLDS: { low: 50, warning: 25 },
+            GAME_LOOP_INTERVAL: 2000,
+            SLEEP_TICK_DURATION: 1000,
+            MAX_SLEEP_TICKS: 5
+        };
+
+        const PIXEL_PALETTE = { 'b': '#1e272e', 'w': '#ffffff', 'o': '#ff9f43', 'p': '#ff8a80', 't': '#0abde3', ' ': null };
+
+        const PENGUIN_SPRITES = {
+            idle: ["    bbbbbb    ", "  bbbbbbbbbb  ", " bbbbbbbbbbbb ", " bbbwwwwwwbbb ", " bbwbwwwwbwbb ", " bbwwwwwwwwbb ", " bbbbwooowbbb ", "  bbbbwwwbbb  ", "   bbbbbbbb   ", "     o  o     "],
+            happy: ["    bbbbbb    ", "  bbbbbbbbbb  ", " bbbbbbbbbbbb ", " bbbwwwwwwbbb ", " bbwbbwwbbwbb ", " bbpppwwpppbb ", " bbbbwooowbbb ", "  bbbbwwwbbb  ", "   bbbbbbbb   ", "     o  o     "],
+            sad: ["    bbbbbb    ", "  bbbbbbbbbb  ", " bbbbbbbbbbbb ", " bbbwwwwwwbbb ", " bbwbwwwwbwbb ", " bbwtwwwwtwbb ", " bbbbbbbbbbbb ", "  bbbbwwwbbb  ", "   bbbbbbbb   ", "     o  o     "],
+            sleepy: ["    bbbbbb    ", "  bbbbbbbbbb  ", " bbbbbbbbbbbb ", " bbbwwwwwwbbb ", " bbwwwwwwwwbb ", " bbwwwwwwwwbb ", " bbbbbowbbbbb ", "  bbbbwwwbbb  ", "   bbbbbbbb   ", "     o  o     "]
+        };
+
+        const MESSAGES = {
+            greeting: ["Ciao! Sono il tuo nuovo animaletto domestico.", "Benvenuto! Sono felicissimo di conoscerti!"],
+            feed: ["Yum! Questo pesce era delizioso!", "Grazie! Avevo così tanta fame!", "Mmm, perfetto! Mi sento meglio ora."],
+            play: ["Che divertimento!", "Mi piace giocare con te!", "Adoro i nostri giochi!"],
+            clean: ["Sono così pulito e soffice!", "Mi sento molto meglio dopo il bagno!", "Che sollievo! Grazie!"],
+            sleep_start: ["Nap time... Zzz...", "Ho sonno... Godiamoci il riposo..."],
+            sleep_end: ["Mi sento riposato e in forma!", "Che riposo fantastico!"],
+            hungry: ["Ho così tanta fame...", "Mi serve qualcosa da mangiare!"],
+            dirty: ["Mi sento appiccicaticcio... mi fai un bagno?", "Ho bisogno di una doccia!"],
+            tired: ["Riesco a malapena a tenere gli occhi aperti...", "Sono troppo stanco per giocare..."],
+            sad: ["Mi sento un po' solo.", "Mi manchi... vuoi giocare con me?"],
+            unable_play: ["Sono troppo stanco o affamato per giocare...", "Non ce la faccio a giocare adesso."]
+        };
+
+        const STORAGE_KEYS = { STATS: 'penguin_stats', SETTINGS: 'penguin_settings', LAST_SAVE: 'penguin_last_save' };
+
+        class PixelRenderer {
+            constructor(canvasId) {
+                this.canvas = document.getElementById(canvasId);
+                this.ctx = this.canvas.getContext('2d');
+                this.currentState = 'idle';
+            }
+            drawPenguin(state, stats) {
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                const sprite = PENGUIN_SPRITES[state] || PENGUIN_SPRITES.idle;
+                for (let y = 0; y < sprite.length; y++) {
+                    for (let x = 0; x < sprite[y].length; x++) {
+                        const char = sprite[y][x];
+                        if (PIXEL_PALETTE[char]) {
+                            this.ctx.fillStyle = PIXEL_PALETTE[char];
+                            this.ctx.fillRect(x, y, 1, 1);
+                        }
+                    }
+                }
+                if (stats.clean < 40 && state !== 'sleepy') {
+                    this.ctx.fillStyle = '#8b5a33';
+                    this.ctx.globalAlpha = (40 - stats.clean) / 40;
+                    this.ctx.fillRect(4, 6, 2, 1);
+                    this.ctx.fillRect(7, 7, 2, 1);
+                    this.ctx.fillRect(5, 8, 1, 1);
+                    this.ctx.globalAlpha = 1;
+                }
+                this.currentState = state;
+            }
+            getMoodState(stats) {
+                if (stats.hunger < GAME_CONFIG.MOOD_THRESHOLDS.sad.hunger || stats.happiness < GAME_CONFIG.MOOD_THRESHOLDS.sad.happiness) return 'sad';
+                else if (stats.energy < GAME_CONFIG.MOOD_THRESHOLDS.sleepy) return 'sleepy';
+                else if (stats.happiness > GAME_CONFIG.MOOD_THRESHOLDS.happy.happiness && stats.hunger > GAME_CONFIG.MOOD_THRESHOLDS.happy.hunger) return 'happy';
+                return 'idle';
+            }
+        }
+
+        class ParticleEngine {
+            constructor(containerId) { this.container = document.getElementById(containerId); }
+            spawnParticle(emoji) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.innerText = emoji;
+                particle.style.left = (Math.random() * 40 + 20) + 'px';
+                particle.style.bottom = '40px';
+                this.container.appendChild(particle);
+                setTimeout(() => particle.remove(), 1000);
+            }
+            spawnMultiple(emoji, count = 3) {
+                for (let i = 0; i < count; i++) {
+                    setTimeout(() => this.spawnParticle(emoji), i * 100);
+                }
+            }
+        }
+
+        class AnimationEngine {
+            constructor(containerId) { this.container = document.getElementById(containerId); }
+            animate(animClass, duration = 500) {
+                this.container.classList.remove('bounce', 'jump');
+                this.container.classList.add(animClass);
+                setTimeout(() => {
+                    this.container.classList.remove(animClass);
+                    if (!gameEngine.isSleeping) this.container.classList.add('bounce');
+                }, duration);
+            }
+            jump() { this.animate('jump', 500); }
+            stopBounce() { this.container.classList.remove('bounce'); }
+            startBounce() { this.container.classList.add('bounce'); }
+        }
+
+        class EnvironmentEngine {
+            static createSnow() {
+                const container = document.getElementById('snowflakes');
+                container.innerHTML = '';
+                for (let i = 0; i < 30; i++) {
+                    const flake = document.createElement('div');
+                    flake.className = 'flake';
+                    flake.style.left = Math.random() * 100 + '%';
+                    flake.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                    flake.style.animationDelay = (Math.random() * 5) + 's';
+                    flake.style.opacity = Math.random();
+                    container.appendChild(flake);
+                }
+            }
+            static setNightMode(isNight) {
+                const screen = document.getElementById('screen');
+                const sunMoon = document.getElementById('sun-moon');
+                if (isNight) {
+                    screen.classList.add('night');
+                    sunMoon.classList.add('moon');
+                } else {
+                    screen.classList.remove('night');
+                    sunMoon.classList.remove('moon');
+                }
+            }
+        }
+
+        class GameEngine {
+            constructor() {
+                this.stats = { ...GAME_CONFIG.INITIAL_STATS };
+                this.isSleeping = false;
+                this.currentState = 'idle';
+                this.gameLoopInterval = null;
+                this.soundEnabled = true;
+                this.particlesEnabled = true;
+                this.settingsOpen = false;
+                this.renderer = new PixelRenderer('pet-canvas');
+                this.particles = new ParticleEngine('pet-container');
+                this.animation = new AnimationEngine('pet-container');
+                this.init();
+            }
+            init() {
+                this.loadSettings();
+                this.loadStats();
+                EnvironmentEngine.createSnow();
+                this.renderer.drawPenguin(this.currentState, this.stats);
+                this.updateUI();
+                this.startGameLoop();
+            }
+            startGameLoop() {
+                if (this.gameLoopInterval) clearInterval(this.gameLoopInterval);
+                this.gameLoopInterval = setInterval(() => {
+                    if (!this.isSleeping) {
+                        for (let key in GAME_CONFIG.DECAY_RATES) this.stats[key] -= GAME_CONFIG.DECAY_RATES[key];
+                        this.updateUI();
+                        this.checkCriticalStats();
+                        this.autoSave();
+                    }
+                }, GAME_CONFIG.GAME_LOOP_INTERVAL);
+            }
+            checkCriticalStats() {
+                if (this.stats.hunger < GAME_CONFIG.CRITICAL_THRESHOLDS.warning) this.showMessage(this.getRandomMessage('hungry'));
+                else if (this.stats.clean < GAME_CONFIG.CRITICAL_THRESHOLDS.warning) this.showMessage(this.getRandomMessage('dirty'));
+                else if (this.stats.energy < GAME_CONFIG.CRITICAL_THRESHOLDS.warning) this.showMessage(this.getRandomMessage('tired'));
+                else if (this.stats.happiness < GAME_CONFIG.CRITICAL_THRESHOLDS.warning) this.showMessage(this.getRandomMessage('sad'));
+            }
+            doAction(action) {
+                if (this.isSleeping && action !== 'sleep') return;
+                const effects = GAME_CONFIG.ACTIONS[action];
+                if (!effects) return;
+
+                switch (action) {
+                    case 'feed':
+                        this.applyEffects(effects);
+                        this.showMessage(this.getRandomMessage('feed'));
+                        if (this.particlesEnabled) this.particles.spawnParticle('🐟');
+                        this.animation.jump();
+                        break;
+                    case 'play':
+                        if (this.stats.energy < 20 || this.stats.hunger < 20) {
+                            this.showMessage(this.getRandomMessage('unable_play'));
+                            return;
+                        }
+                        this.applyEffects(effects);
+                        this.showMessage(this.getRandomMessage('play'));
+                        if (this.particlesEnabled) this.particles.spawnMultiple('❤️', 2);
+                        this.animation.jump();
+                        break;
+                    case 'clean':
+                        this.applyEffects(effects);
+                        this.showMessage(this.getRandomMessage('clean'));
+                        if (this.particlesEnabled) this.particles.spawnMultiple('🫧', 3);
+                        this.animation.jump();
+                        break;
+                    case 'sleep':
+                        this.startSleep();
+                        break;
+                }
+                this.updateUI();
+            }
+            applyEffects(effects) {
+                for (let stat in effects) {
+                    if (stat in this.stats) this.stats[stat] += effects[stat];
+                }
+                this.clampStats();
+            }
+            startSleep() {
+                if (this.isSleeping) return;
+                this.isSleeping = true;
+                this.showMessage(this.getRandomMessage('sleep_start'));
+                EnvironmentEngine.setNightMode(true);
+                this.animation.stopBounce();
+                this.renderer.drawPenguin('sleepy', this.stats);
+                this.setButtonsDisabled(['feed', 'play', 'clean'], true);
+                let sleepTicks = 0;
+                const sleepInterval = setInterval(() => {
+                    if (this.particlesEnabled) this.particles.spawnParticle('💤');
+                    this.stats.energy = Math.min(100, this.stats.energy + GAME_CONFIG.ACTIONS.sleep.energy);
+                    this.updateUI();
+                    sleepTicks++;
+                    if (sleepTicks >= GAME_CONFIG.MAX_SLEEP_TICKS || this.stats.energy >= 100) {
+                        clearInterval(sleepInterval);
+                        this.endSleep();
+                    }
+                }, GAME_CONFIG.SLEEP_TICK_DURATION);
+            }
+            endSleep() {
+                this.isSleeping = false;
+                EnvironmentEngine.setNightMode(false);
+                this.animation.startBounce();
+                this.showMessage(this.getRandomMessage('sleep_end'));
+                this.setButtonsDisabled(['feed', 'play', 'clean'], false);
+                this.updateUI();
+            }
+            updateUI() {
+                this.clampStats();
+                this.updateStatBars();
+                this.updatePenguinState();
+            }
+            updateStatBars() {
+                const statIds = { hunger: 'fill-hunger', happiness: 'fill-happiness', energy: 'fill-energy', clean: 'fill-clean' };
+                for (let stat in statIds) {
+                    const element = document.getElementById(statIds[stat]);
+                    const value = this.stats[stat];
+                    element.style.width = value + '%';
+                    element.className = 'stat-fill';
+                    if (value < 25) element.classList.add('danger');
+                    else if (value < 50) element.classList.add('warning');
+                }
+            }
+            updatePenguinState() {
+                if (!this.isSleeping) {
+                    const newState = this.renderer.getMoodState(this.stats);
+                    if (this.currentState !== newState || this.stats.clean < 40) {
+                        this.currentState = newState;
+                        this.renderer.drawPenguin(this.currentState, this.stats);
+                    }
+                }
+            }
+            showMessage(text) {
+                const statusBox = document.getElementById('status-box');
+                statusBox.innerText = text;
+            }
+            getRandomMessage(category) {
+                const messages = MESSAGES[category] || ['...'];
+                return messages[Math.floor(Math.random() * messages.length)];
+            }
+            clampStats() {
+                for (let stat in this.stats) {
+                    this.stats[stat] = Math.max(0, Math.min(100, this.stats[stat]));
+                }
+            }
+            setButtonsDisabled(buttons, disabled) {
+                buttons.forEach(btn => {
+                    const element = document.getElementById(`btn-${btn}`);
+                    if (element) element.disabled = disabled;
+                });
+            }
+            toggleSettings() {
+                const menu = document.getElementById('settings-menu');
+                this.settingsOpen = !this.settingsOpen;
+                if (this.settingsOpen) {
+                    menu.classList.remove('hidden');
+                } else {
+                    menu.classList.add('hidden');
+                }
+            }
+            resetGame() {
+                if (confirm('Vuoi davvero ricominciare? Tutti i progressi verranno persi.')) {
+                    this.stats = { ...GAME_CONFIG.INITIAL_STATS };
+                    this.isSleeping = false;
+                    this.currentState = 'idle';
+                    this.setButtonsDisabled(['feed', 'play', 'clean'], false);
+                    EnvironmentEngine.setNightMode(false);
+                    this.animation.startBounce();
+                    this.showMessage(this.getRandomMessage('greeting'));
+                    this.updateUI();
+                    this.saveStats();
+                    this.toggleSettings();
+                }
+            }
+            saveStats() {
+                try {
+                    localStorage.setItem(STORAGE_KEYS.STATS, JSON.stringify({ stats: this.stats, timestamp: Date.now() }));
+                } catch (e) { console.warn('Failed to save stats:', e); }
+            }
+            loadStats() {
+                try {
+                    const saved = localStorage.getItem(STORAGE_KEYS.STATS);
+                    if (saved) {
+                        const data = JSON.parse(saved);
+                        this.stats = { ...data.stats };
+                    }
+                } catch (e) { console.warn('Failed to load stats:', e); }
+            }
+            autoSave() {
+                try {
+                    const settings = JSON.parse(localStorage.getItem(STORAGE_KEYS.SETTINGS) || '{}');
+                    if (settings.autoSave !== false) this.saveStats();
+                } catch (e) { }
+            }
+            saveSettings() {
+                try {
+                    const settings = { soundEnabled: this.soundEnabled, particlesEnabled: this.particlesEnabled, autoSave: true };
+                    localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(settings));
+                } catch (e) { console.warn('Failed to save settings:', e); }
+            }
+            loadSettings() {
+                try {
+                    const saved = localStorage.getItem(STORAGE_KEYS.SETTINGS);
+                    if (saved) {
+                        const settings = JSON.parse(saved);
+                        this.soundEnabled = settings.soundEnabled !== false;
+                        this.particlesEnabled = settings.particlesEnabled !== false;
+                    }
+                } catch (e) { console.warn('Failed to load settings:', e); }
+            }
+        }
+
+        let gameEngine;
+        document.addEventListener('DOMContentLoaded', () => {
+            gameEngine = new GameEngine();
+            const soundToggle = document.getElementById('sound-toggle');
+            const particlesToggle = document.getElementById('particles-toggle');
+            if (soundToggle) {
+                soundToggle.addEventListener('change', (e) => {
+                    gameEngine.soundEnabled = e.target.checked;
+                    gameEngine.saveSettings();
+                });
+                soundToggle.checked = gameEngine.soundEnabled;
+            }
+            if (particlesToggle) {
+                particlesToggle.addEventListener('change', (e) => {
+                    gameEngine.particlesEnabled = e.target.checked;
+                    gameEngine.saveSettings();
+                });
+                particlesToggle.checked = gameEngine.particlesEnabled;
+            }
+            console.log('🐧 Penguin Therapy initialized successfully!');
+        });
+        window.addEventListener('beforeunload', () => {
+            if (gameEngine) {
+                gameEngine.saveStats();
+                gameEngine.saveSettings();
+            }
+        });
+    </script>
+</body>
+</html>
