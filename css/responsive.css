@@ -1,0 +1,201 @@
+/* Tablet and smaller devices */
+@media (max-width: 768px) {
+    #device {
+        max-width: 90vw;
+        padding: 15px;
+        gap: 12px;
+    }
+    
+    #title {
+        font-size: 16px;
+    }
+    
+    #screen {
+        height: 240px;
+    }
+    
+    #stats-grid {
+        gap: 6px 12px;
+    }
+    
+    .stat-label {
+        font-size: 9px;
+    }
+    
+    .stat-bar {
+        height: 8px;
+    }
+    
+    button {
+        font-size: 12px;
+        padding: 10px 3px;
+    }
+    
+    .btn-icon {
+        font-size: 14px;
+    }
+}
+
+/* Mobile phones */
+@media (max-width: 480px) {
+    body {
+        padding: 5px;
+    }
+    
+    #device {
+        max-width: 100vw;
+        border-radius: 8px;
+        padding: 12px;
+        gap: 10px;
+    }
+    
+    #title {
+        font-size: 14px;
+        letter-spacing: 0.5px;
+    }
+    
+    #screen-bezel {
+        padding: 10px;
+    }
+    
+    #screen {
+        height: 200px;
+    }
+    
+    #pet-container {
+        width: 70px;
+        height: 50px;
+    }
+    
+    #pet-canvas {
+        width: 100%;
+        height: 100%;
+    }
+    
+    #sun-moon {
+        width: 20px;
+        height: 20px;
+        top: 15px;
+        right: 15px;
+    }
+    
+    .roof-tier-1 { width: 110px; height: 14px; }
+    .roof-tier-2 { width: 140px; height: 14px; }
+    
+    .house-body {
+        width: 120px;
+        height: 90px;
+    }
+    
+    .door {
+        width: 30px;
+        height: 40px;
+    }
+    
+    .window {
+        width: 20px;
+        height: 20px;
+    }
+    .window.left { left: 8px; }
+    .window.right { right: 8px; }
+    
+    #status-box {
+        font-size: 11px;
+        padding: 6px;
+        min-height: 28px;
+    }
+    
+    #stats-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 4px 10px;
+    }
+    
+    .stat-label {
+        font-size: 8px;
+    }
+    
+    .stat-bar {
+        height: 8px;
+    }
+    
+    #actions {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+    }
+    
+    button {
+        font-size: 11px;
+        padding: 8px 2px;
+        box-shadow: 1px 1px 0 var(--outline);
+    }
+    
+    button:active {
+        transform: translate(1px, 1px);
+        box-shadow: 0px 0px 0 var(--outline);
+    }
+    
+    .btn-icon {
+        font-size: 12px;
+    }
+    
+    .btn-settings {
+        font-size: 11px;
+        padding: 6px;
+    }
+    
+    #settings-menu {
+        padding: 8px;
+    }
+    
+    #settings-menu label {
+        font-size: 11px;
+    }
+}
+
+/* Very small phones (< 360px) */
+@media (max-width: 360px) {
+    #device {
+        padding: 10px;
+    }
+    
+    #screen {
+        height: 180px;
+    }
+    
+    #title {
+        font-size: 12px;
+    }
+    
+    button {
+        font-size: 10px;
+        padding: 6px 1px;
+    }
+    
+    .btn-icon {
+        font-size: 11px;
+    }
+}
+
+/* Landscape orientation adjustments */
+@media (orientation: landscape) and (max-height: 600px) {
+    #device {
+        gap: 8px;
+    }
+    
+    #screen {
+        height: 180px;
+    }
+    
+    #ui-panel {
+        gap: 6px;
+    }
+    
+    #stats-grid {
+        gap: 3px 10px;
+    }
+    
+    button {
+        padding: 8px 2px;
+        font-size: 12px;
+    }
+}

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="Penguin Therapy - Un gioco di animale virtuale interattivo con un pinguino carino">
+    <meta name="theme-color" content="#2c3e50">
+    <title>Penguin Therapy Pet - Gioco Interattivo</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+    <div id="device">
+        <h1 id="title">🐧 Penguin Therapy</h1>
+        
+        <div id="screen-bezel">
+            <div id="screen">
+                <div id="sun-moon"></div>
+                <div id="snowflakes"></div>
+                
+                <div id="house">
+                    <div class="roof-tier-1"></div>
+                    <div class="roof-tier-2"></div>
+                    <div class="house-body">
+                        <div id="house-sign">
+                            <div id="house-sign-text">Dottoressa Chiara,<br>la psicologa dei pinguini</div>
+                        </div>
+                        <div class="window left"></div>
+                        <div class="window right"></div>
+                        <div class="door"><div class="doorknob"></div></div>
+                    </div>
+                </div>
+
+                <div id="ground"></div>
+                
+                <div id="pet-container" class="bounce">
+                    <canvas id="pet-canvas" width="14" height="10"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div id="ui-panel">
+            <div id="status-box">Ciao! Sono il tuo nuovo animaletto domestico.</div>
+            
+            <div id="stats-grid">
+                <div class="stat-row">
+                    <span class="stat-label">🍖 Fame</span>
+                    <div class="stat-bar"><div id="fill-hunger" class="stat-fill"></div></div>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">😊 Felicità</span>
+                    <div class="stat-bar"><div id="fill-happiness" class="stat-fill"></div></div>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">⚡ Energia</span>
+                    <div class="stat-bar"><div id="fill-energy" class="stat-fill"></div></div>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">✨ Pulizia</span>
+                    <div class="stat-bar"><div id="fill-clean" class="stat-fill"></div></div>
+                </div>
+            </div>
+
+            <div id="actions">
+                <button onclick="gameEngine.doAction('feed')" id="btn-feed" class="btn-action">
+                    <span class="btn-icon">🐟</span>
+                    <span>Nutrire</span>
+                </button>
+                <button onclick="gameEngine.doAction('play')" id="btn-play" class="btn-action">
+                    <span class="btn-icon">🎾</span>
+                    <span>Giocare</span>
+                </button>
+                <button onclick="gameEngine.doAction('sleep')" id="btn-sleep" class="btn-action">
+                    <span class="btn-icon">🌙</span>
+                    <span>Dormire</span>
+                </button>
+                <button onclick="gameEngine.doAction('clean')" id="btn-clean" class="btn-action">
+                    <span class="btn-icon">🛁</span>
+                    <span>Pulire</span>
+                </button>
+            </div>
+
+            <div id="settings-panel">
+                <button onclick="gameEngine.toggleSettings()" id="btn-settings" class="btn-settings">⚙️ Impostazioni</button>
+                <div id="settings-menu" class="hidden">
+                    <label>
+                        <input type="checkbox" id="sound-toggle" checked> 🔊 Suoni
+                    </label>
+                    <label>
+                        <input type="checkbox" id="particles-toggle" checked> ✨ Effetti
+                    </label>
+                    <button onclick="gameEngine.resetGame()" class="btn-reset">🔄 Ricomincia</button>
+                    <button onclick="gameEngine.toggleSettings()" class="btn-close">✕ Chiudi</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/constants.js"></script>
+    <script src="js/pixel-renderer.js"></script>
+    <script src="js/game-engine.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

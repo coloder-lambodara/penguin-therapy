@@ -1,0 +1,29 @@
+{
+  "name": "penguin-therapy",
+  "version": "1.0.0",
+  "description": "An interactive virtual pet game with an adorable pixel art penguin",
+  "main": "index.html",
+  "scripts": {
+    "start": "python -m http.server 8000",
+    "dev": "python -m http.server 8000"
+  },
+  "keywords": [
+    "game",
+    "tamagotchi",
+    "virtual-pet",
+    "penguin",
+    "interactive",
+    "pixel-art",
+    "web"
+  ],
+  "author": "coloder-lambodara",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/coloder-lambodara/penguin-therapy.git"
+  },
+  "bugs": {
+    "url": "https://github.com/coloder-lambodara/penguin-therapy/issues"
+  },
+  "homepage": "https://github.com/coloder-lambodara/penguin-therapy#readme"
+}
