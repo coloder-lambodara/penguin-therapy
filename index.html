@@ -2,9 +2,17 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="description" content="Penguin Therapy - Un gioco di animale virtuale interattivo con un pinguino carino">
     <meta name="theme-color" content="#2c3e50">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="🐧 Penguin Therapy">
+    
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%232c3e50' width='192' height='192'/><text x='96' y='140' font-size='120' text-anchor='middle'>🐧</text></svg>">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%232c3e50' width='192' height='192' rx='40'/><text x='96' y='140' font-size='120' text-anchor='middle'>🐧</text></svg>">
+    
     <title>Penguin Therapy Pet - Gioco Interattivo</title>
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/responsive.css">
@@ -100,5 +108,31 @@
     <script src="js/pixel-renderer.js"></script>
     <script src="js/game-engine.js"></script>
     <script src="js/main.js"></script>
+    
+    <script>
+        // Register Service Worker for offline support
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js')
+                .then(registration => {
+                    console.log('🐧 Service Worker registrato:', registration);
+                })
+                .catch(error => {
+                    console.log('Errore Service Worker:', error);
+                });
+        }
+
+        // Handle PWA install prompt
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            console.log('🐧 App installabile rilevata');
+        });
+
+        // Listen for app install
+        window.addEventListener('appinstalled', () => {
+            console.log('🐧 App installata con successo!');
+        });
+    </script>
 </body>
 </html>
